@@ -39,6 +39,22 @@ const navItems = [
 ]
 
 export default function CoachLayout({ children }: { children: React.ReactNode }) {
+  const [unreadCount, setUnreadCount] = React.useState(0)
+
+  React.useEffect(() => {
+    const supabase = createClient()
+    async function fetchUnread() {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+      const { data: clients } = await supabase.from('clients').select('id').eq('coach_id', user.id)
+      if (!clients?.length) return
+      const { data: msgs } = await supabase.from('messages').select('id').eq('recipient_id', user.id).eq('read', false).in('sender_id', clients.map(c => c.id))
+      setUnreadCount(msgs?.length ?? 0)
+    }
+    fetchUnread()
+    const channel = supabase.channel('coach-layout-unread').on('postgres_changes', { event: '*', schema: 'public', table: 'messages' }, fetchUnread).subscribe()
+    return () => { supabase.removeChannel(channel) }
+  }, [])
   const pathname = usePathname()
   const router = useRouter()
   const supabase = createClient()
