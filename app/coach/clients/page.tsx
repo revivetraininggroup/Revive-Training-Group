@@ -72,6 +72,10 @@ export default function ClientsPage() {
                 <input className="input" type="email" value={form.email} onChange={e => setForm({...form, email: e.target.value})} required />
               </div>
               <div>
+                <label className="label">Password</label>
+                <input className="input" type="text" placeholder="Set a password for them (min 8 characters)" value={form.password} onChange={e => setForm({...form, password: e.target.value})} required minLength={8} />
+              </div>
+              <div>
                 <label className="label">Goal</label>
                 <input className="input" placeholder="e.g. Lose 20 lbs, build muscle" value={form.goal} onChange={e => setForm({...form, goal: e.target.value})} />
               </div>
