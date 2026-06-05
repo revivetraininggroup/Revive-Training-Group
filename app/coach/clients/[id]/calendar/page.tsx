@@ -61,8 +61,9 @@ export default function ClientCalendarPage() {
 
   async function load() {
     const { data: { user } } = await supabase.auth.getUser()
-    const [{ data: c }, { data: w }, { data: cl }] = await Promise.all([
-      supabase.from('clients').select('*, profile:profiles!id(full_name, email)').eq('id', id).single(),
+    const [{ data: clientData }, { data: profileData }, { data: w }, { data: cl }] = await Promise.all([
+      supabase.from('clients').select('*').eq('id', id).single(),
+      supabase.from('profiles').select('*').eq('id', id).single(),
       supabase.from('calendar_workouts').select('*, exercises:calendar_exercises(*)').eq('client_id', id),
       supabase.from('clients').select('*').eq('coach_id', user!.id).eq('active', true),
     ])
