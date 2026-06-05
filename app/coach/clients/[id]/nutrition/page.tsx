@@ -16,7 +16,7 @@ export default function CoachNutritionPage() {
   const supabase = createClient()
 
   async function load() {
-    const [{ data: c }, { data: p }] = await Promise.all([
+    const [{ data: clientData }, { data: profileData }, { data: p }] = await Promise.all([
       supabase.from('clients').select('*').eq('id', id).single(),
       supabase.from('profiles').select('*').eq('id', id).single(),
       supabase.from('nutrition_plans').select('*').eq('client_id', id).order('created_at', { ascending: false }).limit(1).single(),

@@ -15,15 +15,15 @@ export default function CoachPhotosPage() {
 
   useEffect(() => {
     async function load() {
-      const [{ data: c }, { data: p }] = await Promise.all([
+      const [{ data: clientData }, { data: profileData }, { data: photosData }] = await Promise.all([
         supabase.from('clients').select('*').eq('id', id).single(),
         supabase.from('profiles').select('*').eq('id', id).single(),
         supabase.from('progress_photos').select('*').eq('client_id', id).order('photo_date', { ascending: false }),
       ])
       const c = clientData ? { ...clientData, profile: profileData } : null
       setClient(c)
-      setPhotos(p ?? [])
-      if (p && p.length > 0) setExpanded(p[0].id)
+      setPhotos(photosData ?? [])
+      if (photosData && photosData.length > 0) setExpanded(photosData[0].id)
     }
     load()
   }, [id])
