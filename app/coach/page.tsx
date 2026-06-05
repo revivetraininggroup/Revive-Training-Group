@@ -1,4 +1,4 @@
-import { createServerSupabaseClient } from '@/lib/supabase-server'
+import { createServerSupabaseClient, createAdminSupabaseClient } from '@/lib/supabase-server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 
@@ -7,7 +7,8 @@ export default async function CoachDashboard() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/auth/login')
 
-  const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single()
+  const adminSupabase = createAdminSupabaseClient()
+  const { data: profile } = await adminSupabase.from('profiles').select('*').eq('id', user.id).single()
   if (profile?.role !== 'coach') redirect('/client/dashboard')
 
   const [{ count: clientCount }, { data: recentCheckins }, { data: recentLogs }] = await Promise.all([

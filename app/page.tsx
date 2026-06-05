@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation'
-import { createServerSupabaseClient } from '@/lib/supabase-server'
+import { createServerSupabaseClient, createAdminSupabaseClient } from '@/lib/supabase-server'
 
 export default async function HomePage() {
   const supabase = createServerSupabaseClient()
@@ -7,12 +7,14 @@ export default async function HomePage() {
 
   if (!user) redirect('/auth/login')
 
-  const { data: profile } = await supabase
+  // Use admin client to bypass RLS for role check
+  const adminSupabase = createAdminSupabaseClient()
+  const { data: profile } = await adminSupabase
     .from('profiles')
     .select('role')
     .eq('id', user.id)
     .single()
 
   if (profile?.role === 'coach') redirect('/coach')
-  else redirect('/client/dashboard')
+  redirect('/client/dashboard')
 }

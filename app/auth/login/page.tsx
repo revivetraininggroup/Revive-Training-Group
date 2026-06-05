@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase'
+import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 import { useRouter } from 'next/navigation'
 
 export default function LoginPage() {
@@ -25,7 +26,12 @@ export default function LoginPage() {
       return
     }
 
-    const { data: profile } = await supabase
+    // Use admin client to bypass RLS for role check
+    const adminClient = createSupabaseClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    )
+    const { data: profile } = await adminClient
       .from('profiles')
       .select('role')
       .eq('id', data.user.id)
