@@ -160,6 +160,7 @@ export default function CoachLayout({ children }: { children: React.ReactNode })
       <main className={clsx('flex-1 p-8 transition-all duration-200', collapsed ? 'ml-14' : 'ml-56')}>
         {children}
       </main>
+      <AskAI />
     </div>
   )
 }
