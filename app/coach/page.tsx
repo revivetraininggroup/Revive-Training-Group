@@ -21,7 +21,7 @@ export default async function CoachDashboard() {
 
   const [{ count: clientCount }, { data: recentCheckins }, { data: recentLogs }, { data: clientProfiles }] = await Promise.all([
     supabase.from('clients').select('*', { count: 'exact', head: true }).eq('coach_id', user.id).eq('active', true),
-    supabase.from('checkins').select('*').gte('submitted_at', threeDaysAgo.toISOString()).order('submitted_at', { ascending: false }).limit(10),
+    supabase.from('checkins').select('*, client:profiles(full_name)').gte('submitted_at', threeDaysAgo.toISOString()).order('submitted_at', { ascending: false }).limit(10),
     supabase.from('calendar_workout_logs').select('*, workout:calendar_workouts(title, client_id, scheduled_date)').gte('logged_at', yesterday.toISOString()).order('logged_at', { ascending: false }).limit(10),
     supabase.from('profiles').select('id, full_name').eq('role', 'client'),
   ])

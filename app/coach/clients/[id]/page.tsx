@@ -29,7 +29,7 @@ export default function ClientDetailPage() {
         supabase.from('programs').select('*').eq('client_id', id).order('created_at', { ascending: false }),
         supabase.from('checkins').select('*').eq('client_id', id).order('submitted_at', { ascending: false }),
         supabase.from('body_stats').select('*').eq('client_id', id).order('logged_at', { ascending: false }),
-        supabase.from('workout_logs').select('*').eq('client_id', id).order('logged_at', { ascending: false }),
+        supabase.from('calendar_workout_logs').select('*, workout:calendar_workouts(title, scheduled_date)').eq('client_id', id).order('logged_at', { ascending: false }),
       ])
       const c = clientData ? { ...clientData, profile: profileData } : null
       setClient(c); setPrograms(p ?? []); setCheckins(ci ?? []); setStats(s ?? []); setLogs(l ?? [])
@@ -245,11 +245,15 @@ export default function ClientDetailPage() {
           {logs.length === 0 ? <p className="text-slate-400 text-sm">No workouts logged yet.</p> : logs.map(l => (
             <div key={l.id} className="card flex items-center justify-between">
               <div>
-                <p className="font-medium text-slate-800">{new Date(l.logged_at).toLocaleDateString()}</p>
-                {l.duration_minutes && <p className="text-xs text-slate-400">{l.duration_minutes} minutes</p>}
+                <p className="font-medium text-slate-800">{l.workout?.title ?? 'Workout'}</p>
+                <p className="text-xs text-slate-400">
+                  {l.workout?.scheduled_date && <span>Scheduled: {l.workout.scheduled_date} · </span>}
+                  Logged: {new Date(l.logged_at).toLocaleDateString()}
+                  {l.duration_minutes && <span> · {l.duration_minutes} min</span>}
+                </p>
                 {l.notes && <p className="text-sm text-slate-500 mt-0.5">{l.notes}</p>}
               </div>
-              <span className="badge badge-green">Done ✓</span>
+              <span className="badge badge-green">Completed ✓</span>
             </div>
           ))}
         </div>

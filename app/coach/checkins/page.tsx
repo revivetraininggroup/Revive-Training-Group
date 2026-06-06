@@ -11,7 +11,7 @@ export default function CheckinsPage() {
   const supabase = createClient()
 
   async function load() {
-    const q = supabase.from('checkins').select('*').order('submitted_at', { ascending: false })
+    const q = supabase.from('checkins').select('*, client:profiles(full_name, email)').order('submitted_at', { ascending: false })
     const { data } = filter === 'pending' ? await q.is('coach_feedback', null) : await q
     setCheckins(data ?? [])
   }
