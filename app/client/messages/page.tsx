@@ -14,6 +14,10 @@ export default function ClientMessagesPage() {
   const bottomRef = useRef<HTMLDivElement>(null)
   const supabase = createClient()
 
+  // Use refs so the realtime callback always has current values
+  const clientIdRef = useRef<string>('')
+  const coachIdRef = useRef<string>('')
+
   async function loadMessages(userId: string, coacId: string) {
     const { data: msgs } = await supabase
       .from('messages')
@@ -22,37 +26,53 @@ export default function ClientMessagesPage() {
       .order('sent_at')
     setMessages(msgs ?? [])
 
-    // Count unread from coach
-    const unread = (msgs ?? []).filter(m => m.sender_id === coacId && !m.read).length
-    setUnreadCount(unread)
-
     // Mark as read
     await supabase.from('messages').update({ read: true }).eq('recipient_id', userId).eq('sender_id', coacId)
     setUnreadCount(0)
   }
 
   useEffect(() => {
+    let channel: any = null
+
     async function init() {
       const { data: { user } } = await supabase.auth.getUser()
-      setClientId(user!.id)
+      if (!user) return
 
-      const { data: clientRecord } = await supabase.from('clients').select('coach_id').eq('id', user!.id).single()
-      if (clientRecord?.coach_id) {
-        const { data: coachProfile } = await supabase.from('profiles').select('*').eq('id', clientRecord.coach_id).single()
-        setCoach(coachProfile)
-        setCoachId(clientRecord.coach_id)
-        loadMessages(user!.id, clientRecord.coach_id)
+      setClientId(user.id)
+      clientIdRef.current = user.id
 
-        // Subscribe to new messages
-        const channel = supabase.channel('client-messages')
-          .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, (payload: any) => {
-            loadMessages(user!.id, clientRecord.coach_id)
-          })
-          .subscribe()
-        return () => { supabase.removeChannel(channel) }
-      }
+      const { data: clientRecord } = await supabase.from('clients').select('coach_id').eq('id', user.id).single()
+      if (!clientRecord?.coach_id) return
+
+      const { data: coachProfile } = await supabase.from('profiles').select('*').eq('id', clientRecord.coach_id).single()
+      setCoach(coachProfile)
+      setCoachId(clientRecord.coach_id)
+      coachIdRef.current = clientRecord.coach_id
+
+      await loadMessages(user.id, clientRecord.coach_id)
+
+      // Subscribe — filter to only messages where THIS client is the recipient
+      channel = supabase.channel('client-messages-' + user.id)
+        .on(
+          'postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'messages',
+            filter: `recipient_id=eq.${user.id}`
+          },
+          () => {
+            loadMessages(clientIdRef.current, coachIdRef.current)
+          }
+        )
+        .subscribe()
     }
+
     init()
+
+    return () => {
+      if (channel) supabase.removeChannel(channel)
+    }
   }, [])
 
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [messages])
@@ -63,7 +83,6 @@ export default function ClientMessagesPage() {
     setSending(true)
     const msgContent = newMsg
     setNewMsg('')
-    // Optimistically add message to UI immediately
     const tempMsg = { id: 'temp-' + Date.now(), sender_id: clientId, recipient_id: coach.id, content: msgContent, sent_at: new Date().toISOString(), read: false }
     setMessages(prev => [...prev, tempMsg])
     await supabase.from('messages').insert({ sender_id: clientId, recipient_id: coach.id, content: msgContent })

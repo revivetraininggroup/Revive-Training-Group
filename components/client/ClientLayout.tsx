@@ -77,12 +77,18 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       setUnreadCount(msgs?.length ?? 0)
     }
     fetchUnread()
-    const channel = supabase
-      .channel('client-layout-unread-' + Math.random())
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, () => fetchUnread())
-      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'messages' }, () => fetchUnread())
-      .subscribe()
-    return () => { supabase.removeChannel(channel) }
+
+    // Subscribe filtered to this user's messages only
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) return
+      const channel = supabase
+        .channel('client-layout-unread-' + user.id)
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages', filter: `recipient_id=eq.${user.id}` }, () => fetchUnread())
+        .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'messages', filter: `recipient_id=eq.${user.id}` }, () => fetchUnread())
+        .subscribe()
+    })
+
+    return () => {}
   }, [])
   const pathname = usePathname()
   const router = useRouter()
