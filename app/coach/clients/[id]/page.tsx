@@ -24,15 +24,15 @@ export default function ClientDetailPage() {
 
   useEffect(() => {
     async function load() {
-      const [{ data: clientData }, { data: profileData }, { data: p }, { data: ci }, { data: s }, { data: l }, { data: ob }] = await Promise.all([
+      const [{ data: clientData }, { data: profileData }, { data: p }, { data: ci }, { data: s }, { data: l }] = await Promise.all([
         supabase.from('clients').select('*').eq('id', id).single(),
         supabase.from('profiles').select('*').eq('id', id).single(),
         supabase.from('programs').select('*').eq('client_id', id).order('created_at', { ascending: false }),
-        supabase.from('checkins').select('*').eq('client_id', id).order('submitted_at', { ascending: false }),
+        supabase.from('checkins').select('*, client:profiles(full_name, email)').eq('client_id', id).order('submitted_at', { ascending: false }),
         supabase.from('body_stats').select('*').eq('client_id', id).order('logged_at', { ascending: false }),
         supabase.from('calendar_workout_logs').select('*, workout:calendar_workouts(title, scheduled_date)').eq('client_id', id).order('logged_at', { ascending: false }),
-        supabase.from('client_onboarding').select('*').eq('client_id', id).single(),
       ])
+      const { data: ob } = await supabase.from('client_onboarding').select('*').eq('client_id', id).maybeSingle()
       const c = clientData ? { ...clientData, profile: profileData } : null
       setClient(c); setPrograms(p ?? []); setCheckins(ci ?? []); setStats(s ?? []); setLogs(l ?? []); setOnboarding(ob ?? null)
     }
