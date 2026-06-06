@@ -30,28 +30,16 @@ export default function AskAI() {
     setLoading(true)
 
     try {
-      const res = await fetch('https://api.anthropic.com/v1/messages', {
+      const res = await fetch('/api/ask-ai', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514',
-          max_tokens: 1000,
-          system: `You are an expert personal training and coaching assistant built into the Revive Training Group coaching platform. You help coaches with:
-- Programming workouts and training plans
-- Nutrition advice and meal planning for clients
-- Client motivation and communication strategies
-- Exercise technique and form cues
-- Recovery and injury prevention
-- Goal setting and progress tracking
-- Check-in feedback and coaching responses
-
-Keep responses concise and practical. Use bullet points when listing multiple items. You're talking to a personal trainer, so use appropriate fitness terminology.`,
           messages: [...messages, userMsg].map(m => ({ role: m.role, content: m.content }))
         })
       })
 
       const data = await res.json()
-      const reply = data.content?.[0]?.text ?? 'Sorry, I could not get a response.'
+      const reply = data.reply ?? 'Sorry, I could not get a response.'
       setMessages(prev => [...prev, { role: 'assistant', content: reply }])
     } catch {
       setMessages(prev => [...prev, { role: 'assistant', content: 'Something went wrong. Please try again.' }])
