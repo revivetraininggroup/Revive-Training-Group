@@ -58,17 +58,7 @@ export default function RegisterPage() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-sky-50 to-slate-100">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-3 mb-2">
-            <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-              <rect width="48" height="48" rx="11" fill="#0c1a2e"/>
-              <text x="24" y="35" fontFamily="system-ui, sans-serif" fontSize="28" fontWeight="900" fill="#0ea5e9" textAnchor="middle">R</text>
-            </svg>
-            <div className="text-left">
-              <p className="font-black text-slate-900 tracking-widest text-2xl leading-none">REVIVE</p>
-              <p className="text-[10px] text-slate-400 tracking-widest font-medium mt-1">TRAINING GROUP</p>
-            </div>
-          </div>
-        </div>
+          <img src="/rtg-logo.png" alt="Revive Training Group" className="h-16 mx-auto" />
 
         <div className="card shadow-sm">
           <form onSubmit={handleRegister} className="space-y-4">
