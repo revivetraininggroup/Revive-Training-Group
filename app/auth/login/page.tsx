@@ -40,6 +40,7 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <img src="/rtg-logo.png" alt="Revive Training Group" className="h-16 mx-auto" />
+        </div>
 
         <div className="card shadow-sm">
           <form onSubmit={handleLogin} className="space-y-4">

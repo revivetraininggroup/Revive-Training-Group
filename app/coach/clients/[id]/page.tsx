@@ -239,6 +239,25 @@ export default function ClientDetailPage() {
         </div>
       )}
 
+      {tab === 'logs' && (
+        <div className="space-y-2">
+          {logs.length === 0 ? <p className="text-slate-400 text-sm">No workouts logged yet.</p> : logs.map(l => (
+            <div key={l.id} className="card flex items-center justify-between">
+              <div>
+                <p className="font-medium text-slate-800">{l.workout?.title ?? 'Workout'}</p>
+                <p className="text-xs text-slate-400">
+                  {l.workout?.scheduled_date && <span>Scheduled: {l.workout.scheduled_date} · </span>}
+                  Logged: {new Date(l.logged_at).toLocaleDateString()}
+                  {l.duration_minutes && <span> · {l.duration_minutes} min</span>}
+                </p>
+                {l.notes && <p className="text-sm text-slate-500 mt-0.5">{l.notes}</p>}
+              </div>
+              <span className="badge badge-green">Completed ✓</span>
+            </div>
+          ))}
+        </div>
+      )}
+
       {/* Edit Profile Modal */}
       {showProfile && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
@@ -295,24 +314,6 @@ export default function ClientDetailPage() {
         </div>
       )}
 
-      {tab === 'logs' && (
-        <div className="space-y-2">
-          {logs.length === 0 ? <p className="text-slate-400 text-sm">No workouts logged yet.</p> : logs.map(l => (
-            <div key={l.id} className="card flex items-center justify-between">
-              <div>
-                <p className="font-medium text-slate-800">{l.workout?.title ?? 'Workout'}</p>
-                <p className="text-xs text-slate-400">
-                  {l.workout?.scheduled_date && <span>Scheduled: {l.workout.scheduled_date} · </span>}
-                  Logged: {new Date(l.logged_at).toLocaleDateString()}
-                  {l.duration_minutes && <span> · {l.duration_minutes} min</span>}
-                </p>
-                {l.notes && <p className="text-sm text-slate-500 mt-0.5">{l.notes}</p>}
-              </div>
-              <span className="badge badge-green">Completed ✓</span>
-            </div>
-          ))}
-        </div>
-      )}
     </div>
   )
 }
