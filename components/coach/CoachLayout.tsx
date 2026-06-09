@@ -99,7 +99,7 @@ export default function CoachLayout({ children }: { children: React.ReactNode })
 
       {/* Mobile top header */}
       <header className="md:hidden fixed top-0 left-0 right-0 z-30 flex items-center justify-between px-3" style={{ backgroundColor: '#1a2e4a', height: '52px' }}>
-        <img src="/rtg-logo-dark.png" alt="Revive Training Group" className="h-full w-auto py-1.5" />
+        <img src="/rtg-logo-dark.png" alt="Revive Training Group" className="h-9 w-auto" />
         <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="text-white p-1">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             {mobileMenuOpen ? <path d="M18 6L6 18M6 6l12 12"/> : <path d="M3 12h18M3 6h18M3 18h18"/>}
@@ -113,7 +113,7 @@ export default function CoachLayout({ children }: { children: React.ReactNode })
           <div className="absolute inset-0 bg-black/50" />
           <div className="absolute top-0 right-0 w-64 h-full bg-white shadow-xl flex flex-col" onClick={e => e.stopPropagation()}>
             <div className="px-4 py-5 border-b border-slate-100" style={{ backgroundColor: '#1a2e4a' }}>
-              <img src="/rtg-logo-dark.png" alt="Revive" className="h-full w-auto py-1.5" />
+              <img src="/rtg-logo-dark.png" alt="Revive" className="h-9 w-auto" />
               <p className="text-xs text-sky-300 mt-1">Coach Portal</p>
             </div>
             <nav className="flex-1 p-3 space-y-0.5">
