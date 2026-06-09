@@ -110,11 +110,11 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
         <div className={clsx('border-b border-slate-100 flex items-center', collapsed ? 'px-2 py-4 justify-center' : 'px-4 py-5 justify-between')}>
           {!collapsed && (
             <div className="flex items-center gap-2.5">
-              <img src="/rtg-logo-white.png" alt="Revive Training Group" className="h-8" />
+              <img src="/rtg-logo-white.png" alt="Revive Training Group" className="h-14" />
             </div>
           )}
           {collapsed && (
-            <img src="/rtg-logo-white.png" alt="RTG" className="h-6 w-auto" />
+            <img src="/rtg-logo-white.png" alt="RTG" className="h-10 w-auto" />
           )}
           {!collapsed && (
             <button onClick={() => setCollapsed(true)} className="text-slate-300 hover:text-slate-500 transition-colors ml-2 flex-shrink-0" title="Collapse sidebar">

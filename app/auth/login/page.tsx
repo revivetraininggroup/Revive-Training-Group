@@ -38,7 +38,7 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#1a2e4a' }}>
       <div className="w-full max-w-md px-4">
         <div className="text-center mb-8">
-          <img src="/rtg-logo-dark.png" alt="Revive Training Group" className="h-24 mx-auto" />
+          <img src="/rtg-logo-dark.png" alt="Revive Training Group" className="h-44 mx-auto" />
         </div>
 
         <div className="rounded-2xl p-8" style={{ backgroundColor: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)' }}>
