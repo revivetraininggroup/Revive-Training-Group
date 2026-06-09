@@ -23,7 +23,7 @@ export default function ClientDetailPage() {
 
   useEffect(() => {
     async function load() {
-      const [{ data: clientData }, { data: profileData }, { data: p }, { data: ci }, { data: s }, { data: l }] = await Promise.all([
+      const [{ data: clientData }, { data: profileData }, { data: ci }, { data: s }, { data: l }] = await Promise.all([
         supabase.from('clients').select('*').eq('id', id).single(),
         supabase.from('profiles').select('*').eq('id', id).single(),
         supabase.from('checkins').select('*, client:profiles(full_name, email)').eq('client_id', id).order('submitted_at', { ascending: false }),
