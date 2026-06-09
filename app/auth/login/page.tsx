@@ -26,7 +26,6 @@ export default function LoginPage() {
       return
     }
 
-    // Check if coach by email
     const COACH_EMAIL = process.env.NEXT_PUBLIC_COACH_EMAIL || 'raikeschristopher@gmail.com'
     if (data.user.email === COACH_EMAIL) {
       router.push('/coach')
@@ -36,18 +35,19 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-sky-50 to-slate-100">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#1a2e4a' }}>
+      <div className="w-full max-w-md px-4">
         <div className="text-center mb-8">
-          <img src="/rtg-logo.png" alt="Revive Training Group" className="h-16 mx-auto" />
+          <img src="/rtg-logo-dark.png" alt="Revive Training Group" className="h-24 mx-auto" />
         </div>
 
-        <div className="card shadow-sm">
-          <form onSubmit={handleLogin} className="space-y-4">
+        <div className="rounded-2xl p-8" style={{ backgroundColor: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)' }}>
+          <form onSubmit={handleLogin} className="space-y-5">
             <div>
-              <label className="label">Email</label>
+              <label className="block text-sm font-medium text-blue-100 mb-1.5">Email</label>
               <input
-                className="input"
+                className="w-full px-4 py-2.5 rounded-lg text-sm text-white placeholder-blue-300 outline-none focus:ring-2 focus:ring-blue-400"
+                style={{ backgroundColor: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.15)' }}
                 type="email"
                 placeholder="you@example.com"
                 value={email}
@@ -56,9 +56,10 @@ export default function LoginPage() {
               />
             </div>
             <div>
-              <label className="label">Password</label>
+              <label className="block text-sm font-medium text-blue-100 mb-1.5">Password</label>
               <input
-                className="input"
+                className="w-full px-4 py-2.5 rounded-lg text-sm text-white placeholder-blue-300 outline-none focus:ring-2 focus:ring-blue-400"
+                style={{ backgroundColor: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.15)' }}
                 type="password"
                 placeholder="••••••••"
                 value={password}
@@ -68,18 +69,23 @@ export default function LoginPage() {
             </div>
 
             {error && (
-              <p className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-lg">{error}</p>
+              <p className="text-sm text-red-300 bg-red-900/40 px-3 py-2 rounded-lg">{error}</p>
             )}
 
-            <button type="submit" className="btn-primary w-full" disabled={loading}>
+            <button
+              type="submit"
+              className="w-full py-2.5 rounded-lg text-sm font-semibold text-white transition-opacity disabled:opacity-60"
+              style={{ backgroundColor: '#4a7fd4' }}
+              disabled={loading}
+            >
               {loading ? 'Signing in...' : 'Sign in'}
             </button>
           </form>
         </div>
 
-        <p className="text-center text-sm text-slate-500 mt-4">
+        <p className="text-center text-sm text-blue-300 mt-6">
           New client?{' '}
-          <a href="/auth/register" className="text-sky-600 font-medium hover:underline">
+          <a href="/auth/register" className="text-white font-medium hover:underline">
             Create account
           </a>
         </p>
