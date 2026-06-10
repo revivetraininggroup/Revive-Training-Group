@@ -11,7 +11,14 @@ export default function CheckinsPage() {
   const supabase = createClient()
 
   async function load() {
-    const q = supabase.from('checkins').select('*, client:profiles(full_name, email)').order('submitted_at', { ascending: false })
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return
+    // Get only this coach's client IDs
+    const { data: myClients } = await supabase.from('clients').select('id').eq('coach_id', user.id)
+    const clientIds = myClients?.map(c => c.id) ?? []
+    if (clientIds.length === 0) { setCheckins([]); return }
+
+    const q = supabase.from('checkins').select('*, client:profiles(full_name, email)').in('client_id', clientIds).order('submitted_at', { ascending: false })
     const { data } = filter === 'pending' ? await q.is('coach_feedback', null) : await q
     setCheckins(data ?? [])
   }

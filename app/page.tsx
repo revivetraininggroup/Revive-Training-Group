@@ -9,6 +9,12 @@ export default async function HomePage() {
 
   if (!user) redirect('/auth/login')
 
+  // Admin coach
   if (user.email === COACH_EMAIL) redirect('/coach')
+
+  // Check role for other users
+  const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
+  if (profile?.role === 'coach') redirect('/coach')
+
   redirect('/client/dashboard')
 }

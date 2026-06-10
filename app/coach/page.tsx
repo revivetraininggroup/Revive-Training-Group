@@ -19,11 +19,18 @@ export default async function CoachDashboard() {
   threeDaysAgo.setDate(threeDaysAgo.getDate() - 3)
   threeDaysAgo.setHours(0, 0, 0, 0)
 
-  const [{ count: clientCount }, { data: recentCheckins }, { data: recentLogs }, { data: clientProfiles }] = await Promise.all([
+  // Get this coach's client IDs first
+  const { data: myClients } = await supabase.from('clients').select('id').eq('coach_id', user.id).eq('active', true)
+  const myClientIds = myClients?.map(c => c.id) ?? []
+
+  const [{ count: clientCount }, { data: recentCheckins }, { data: recentLogs }] = await Promise.all([
     supabase.from('clients').select('*', { count: 'exact', head: true }).eq('coach_id', user.id).eq('active', true),
-    supabase.from('checkins').select('*, client:profiles(full_name)').gte('submitted_at', threeDaysAgo.toISOString()).order('submitted_at', { ascending: false }).limit(10),
-    supabase.from('calendar_workout_logs').select('*, workout:calendar_workouts(title, client_id, scheduled_date)').gte('logged_at', yesterday.toISOString()).order('logged_at', { ascending: false }).limit(10),
-    supabase.from('profiles').select('id, full_name').eq('role', 'client'),
+    myClientIds.length > 0
+      ? supabase.from('checkins').select('*, client:profiles(full_name)').in('client_id', myClientIds).gte('submitted_at', threeDaysAgo.toISOString()).order('submitted_at', { ascending: false }).limit(10)
+      : Promise.resolve({ data: [] }),
+    myClientIds.length > 0
+      ? supabase.from('calendar_workout_logs').select('*, client:profiles(full_name), workout:calendar_workouts(title, scheduled_date)').in('client_id', myClientIds).gte('logged_at', yesterday.toISOString()).order('logged_at', { ascending: false }).limit(10)
+      : Promise.resolve({ data: [] }),
   ])
 
   const today = new Date()
@@ -88,7 +95,7 @@ export default async function CoachDashboard() {
           {recentLogs && recentLogs.length > 0 ? (
             <div className="space-y-3">
               {recentLogs.map((log: any) => {
-                const clientProfile = clientProfiles?.find((p: any) => p.id === log.workout?.client_id)
+                const clientProfile = log.client
                 const logDate = new Date(log.logged_at)
                 const isToday = logDate.toDateString() === new Date().toDateString()
                 return (

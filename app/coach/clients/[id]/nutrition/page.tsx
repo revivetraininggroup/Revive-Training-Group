@@ -16,12 +16,15 @@ export default function CoachNutritionPage() {
   const supabase = createClient()
 
   async function load() {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return
     const [{ data: clientData }, { data: profileData }, { data: p }] = await Promise.all([
       supabase.from('clients').select('*').eq('id', id).single(),
       supabase.from('profiles').select('*').eq('id', id).single(),
       supabase.from('nutrition_plans').select('*').eq('client_id', id).order('created_at', { ascending: false }).limit(1).single(),
     ])
-
+    const ADMIN_EMAIL = process.env.NEXT_PUBLIC_COACH_EMAIL || 'raikeschristopher@gmail.com'
+    if (clientData && user.email !== ADMIN_EMAIL && clientData.coach_id !== user.id) return
     const c = clientData ? { ...clientData, profile: profileData } : null
     setClient(c)
     if (p) {

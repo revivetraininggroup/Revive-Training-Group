@@ -61,12 +61,16 @@ export default function ClientCalendarPage() {
 
   async function load() {
     const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return
     const [{ data: clientData }, { data: profileData }, { data: w }, { data: cl }] = await Promise.all([
       supabase.from('clients').select('*').eq('id', id).single(),
       supabase.from('profiles').select('*').eq('id', id).single(),
       supabase.from('calendar_workouts').select('*, exercises:calendar_exercises(*), logs:calendar_workout_logs(*, exercise_logs:calendar_exercise_logs(*))').eq('client_id', id),
       supabase.from('clients').select('*').eq('coach_id', user!.id).eq('active', true),
     ])
+    // Verify ownership
+    const ADMIN_EMAIL = process.env.NEXT_PUBLIC_COACH_EMAIL || 'raikeschristopher@gmail.com'
+    if (clientData && user.email !== ADMIN_EMAIL && clientData.coach_id !== user.id) return
     const c = clientData ? { ...clientData, profile: profileData } : null
     setClient(c)
     setAllClients(cl ?? [])

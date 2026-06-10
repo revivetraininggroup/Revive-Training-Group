@@ -15,11 +15,15 @@ export default function CoachPhotosPage() {
 
   useEffect(() => {
     async function load() {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
       const [{ data: clientData }, { data: profileData }, { data: photosData }] = await Promise.all([
         supabase.from('clients').select('*').eq('id', id).single(),
         supabase.from('profiles').select('*').eq('id', id).single(),
         supabase.from('progress_photos').select('*').eq('client_id', id).order('photo_date', { ascending: false }),
       ])
+      const ADMIN_EMAIL = process.env.NEXT_PUBLIC_COACH_EMAIL || 'raikeschristopher@gmail.com'
+      if (clientData && user.email !== ADMIN_EMAIL && clientData.coach_id !== user.id) return
       const c = clientData ? { ...clientData, profile: profileData } : null
       setClient(c)
       setPhotos(photosData ?? [])

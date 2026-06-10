@@ -64,7 +64,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     const supabase = createClient()
     async function fetchUnread() {
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
+      if (!user) { router.push('/auth/login'); return }
       const { data: clientRecord } = await supabase.from('clients').select('coach_id').eq('id', user.id).single()
       if (!clientRecord?.coach_id) return
       const { data: msgs } = await supabase.from('messages').select('id').eq('recipient_id', user.id).eq('sender_id', clientRecord.coach_id).eq('read', false)

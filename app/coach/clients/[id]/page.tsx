@@ -23,6 +23,9 @@ export default function ClientDetailPage() {
 
   useEffect(() => {
     async function load() {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) { router.push('/auth/login'); return }
+
       const [{ data: clientData }, { data: profileData }, { data: ci }, { data: s }, { data: l }] = await Promise.all([
         supabase.from('clients').select('*').eq('id', id).single(),
         supabase.from('profiles').select('*').eq('id', id).single(),
@@ -30,6 +33,14 @@ export default function ClientDetailPage() {
         supabase.from('body_stats').select('*').eq('client_id', id).order('logged_at', { ascending: false }),
         supabase.from('calendar_workout_logs').select('*, workout:calendar_workouts(title, scheduled_date)').eq('client_id', id).order('logged_at', { ascending: false }),
       ])
+
+      // Verify this coach owns this client
+      const ADMIN_EMAIL = process.env.NEXT_PUBLIC_COACH_EMAIL || 'raikeschristopher@gmail.com'
+      if (clientData && user.email !== ADMIN_EMAIL && clientData.coach_id !== user.id) {
+        router.push('/coach/clients')
+        return
+      }
+
       const { data: ob } = await supabase.from('client_onboarding').select('*').eq('client_id', id).maybeSingle()
       const c = clientData ? { ...clientData, profile: profileData } : null
       setClient(c); setCheckins(ci ?? []); setStats(s ?? []); setLogs(l ?? []); setOnboarding(ob ?? null)
