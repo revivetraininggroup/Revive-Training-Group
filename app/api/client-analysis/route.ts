@@ -28,7 +28,7 @@ export async function POST(req: Request) {
     ? `${recentLogs.length} recent workouts logged. Last workout: ${recentLogs[0]?.workout?.title ?? 'Unknown'} on ${recentLogs[0]?.logged_at?.split('T')[0]}`
     : 'No workouts logged yet'
 
-  const prompt = `You are an expert fitness coaching assistant. Analyze this client's recent performance data and give a brief, honest assessment.
+  const prompt = `You are an expert fitness coaching assistant. Analyze this client's recent performance data and give a structured assessment.
 
 CLIENT: ${client.profile?.full_name ?? 'Client'}
 Goal: ${client.goal || 'Not specified'}
@@ -42,13 +42,23 @@ ${checkinSummary || 'No check-ins yet'}
 WORKOUT HISTORY:
 ${workoutSummary}
 
-Provide a concise performance analysis in 3-4 sentences. Cover:
-1. Overall trend (improving, declining, or maintaining)
-2. Key strengths based on their check-in scores
-3. Main area of concern or focus
-4. One actionable recommendation for the coach
+Return your analysis in exactly this format with no extra text, no markdown, no asterisks:
 
-Be direct and specific. Use the actual numbers. Don't be generic.`
+OVERALL TREND
+[one sentence on whether they are improving, declining, or maintaining]
+
+STRENGTHS
+- [strength 1]
+- [strength 2]
+
+CONCERNS
+- [concern 1]
+- [concern 2]
+
+RECOMMENDATION
+- [one specific actionable thing the coach should do or tell this client]
+
+Be direct, specific, and use actual numbers from the data.`
 
   try {
     const response = await fetch('https://api.anthropic.com/v1/messages', {

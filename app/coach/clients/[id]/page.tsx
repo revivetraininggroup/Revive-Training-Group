@@ -162,7 +162,7 @@ export default function ClientDetailPage() {
           </div>
 
           <div className="card" style={{ borderLeft: '3px solid #0ea5e9' }}>
-            <div className="flex items-center gap-2 mb-2">
+            <div className="flex items-center gap-2 mb-3">
               <span className="text-sky-600 text-sm font-semibold">✦ AI Performance Analysis</span>
               {loadingAnalysis && <span className="text-xs text-slate-400 animate-pulse">Analyzing...</span>}
             </div>
@@ -173,7 +173,24 @@ export default function ClientDetailPage() {
                 <div className="h-3 bg-slate-100 rounded animate-pulse w-4/6" />
               </div>
             ) : aiAnalysis ? (
-              <p className="text-sm text-slate-700 leading-relaxed">{aiAnalysis}</p>
+              <div className="space-y-3">
+                {aiAnalysis.split('\n\n').map((section, i) => {
+                  const lines = section.trim().split('\n')
+                  const heading = lines[0]
+                  const body = lines.slice(1)
+                  if (!heading) return null
+                  return (
+                    <div key={i}>
+                      <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">{heading}</p>
+                      {body.map((line, j) => (
+                        <p key={j} className={`text-sm text-slate-700 ${line.startsWith('-') ? 'ml-2' : ''}`}>
+                          {line.startsWith('-') ? '• ' + line.slice(1).trim() : line}
+                        </p>
+                      ))}
+                    </div>
+                  )
+                })}
+              </div>
             ) : (
               <p className="text-sm text-slate-400">No data yet -- analysis will appear once the client has check-ins or logged workouts.</p>
             )}
