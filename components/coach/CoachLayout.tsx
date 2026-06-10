@@ -61,6 +61,12 @@ export default function CoachLayout({ children }: { children: React.ReactNode })
   const pathname = usePathname()
   const router = useRouter()
   const supabase = createClient()
+  const ADMIN_EMAIL = process.env.NEXT_PUBLIC_COACH_EMAIL || 'raikeschristopher@gmail.com'
+  const [userEmail, setUserEmail] = useState('')
+
+  React.useEffect(() => {
+    createClient().auth.getUser().then(({ data: { user } }) => setUserEmail(user?.email ?? ''))
+  }, [])
 
   async function signOut() {
     await supabase.auth.signOut()
@@ -92,7 +98,10 @@ export default function CoachLayout({ children }: { children: React.ReactNode })
             </Link>
           ))}
         </nav>
-        <div className="p-3 border-t border-slate-100">
+        <div className="p-3 border-t border-slate-100 space-y-0.5">
+          {userEmail === ADMIN_EMAIL && (
+            <Link href="/coach/admin" className={clsx('sidebar-link', { active: pathname === '/coach/admin' })}>Admin</Link>
+          )}
           <button onClick={signOut} className="sidebar-link w-full text-left text-red-400 hover:bg-red-50 hover:text-red-600">Sign out</button>
         </div>
       </aside>
@@ -133,7 +142,10 @@ export default function CoachLayout({ children }: { children: React.ReactNode })
                 </Link>
               ))}
             </nav>
-            <div className="p-3 border-t border-slate-100">
+            <div className="p-3 border-t border-slate-100 space-y-0.5">
+              {userEmail === ADMIN_EMAIL && (
+                <Link href="/coach/admin" onClick={() => setMobileMenuOpen(false)} className={clsx('sidebar-link', { active: pathname === '/coach/admin' })}>Admin</Link>
+              )}
               <button onClick={signOut} className="sidebar-link w-full text-left text-red-400 hover:bg-red-50 hover:text-red-600">Sign out</button>
             </div>
           </div>

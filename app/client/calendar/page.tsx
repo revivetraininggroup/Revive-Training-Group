@@ -60,7 +60,11 @@ export default function ClientCalendarPage() {
 
   function startLog(workout: any) {
     setLogging(workout)
-    setLogForm({ duration_minutes: '', notes: '' })
+    const existingLog = workout.logs?.[0]
+    setLogForm({
+      duration_minutes: existingLog?.duration_minutes?.toString() ?? '',
+      notes: existingLog?.notes ?? ''
+    })
     setExerciseLogs(workout.exercises?.map((ex: any) => ({
       exercise_name: ex.name,
       sets_completed: ex.sets?.toString() ?? '',
@@ -235,9 +239,9 @@ export default function ClientCalendarPage() {
                       </div>
                       {w.notes && <p className="text-sm text-slate-500 mt-0.5">{w.notes}</p>}
                     </div>
-                    {!isDone && (
-                      <button onClick={() => startLog(w)} className="btn-primary text-sm">Log workout</button>
-                    )}
+                    <button onClick={() => startLog(w)} className={`text-sm ${isDone ? 'btn-secondary' : 'btn-primary'}`}>
+                      {isDone ? 'Edit log' : 'Log workout'}
+                    </button>
                   </div>
 
                   {w.exercises?.length > 0 && (
