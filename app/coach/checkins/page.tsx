@@ -63,7 +63,7 @@ export default function CheckinsPage() {
                 {c.coach_feedback ? <span className="badge badge-green">Reviewed ✓</span> : <span className="badge badge-amber">Needs feedback</span>}
               </div>
 
-              <div className="grid grid-cols-5 gap-4 mb-4">
+              <div className="grid grid-cols-5 gap-1 mb-4">
                 {[
                   ['Energy', c.energy_level, '⚡'],
                   ['Sleep', c.sleep_quality, '😴'],
@@ -80,7 +80,7 @@ export default function CheckinsPage() {
                 ))}
               </div>
 
-              <div className="grid grid-cols-3 gap-3 mb-4">
+              <div className="grid grid-cols-3 gap-2 mb-4">
                 {c.wins && <div className="bg-sky-50 rounded-lg p-2"><p className="text-xs font-medium text-green-700 mb-1">Wins 🎉</p><p className="text-xs text-sky-600">{c.wins}</p></div>}
                 {c.struggles && <div className="bg-amber-50 rounded-lg p-2"><p className="text-xs font-medium text-amber-700 mb-1">Struggles 😤</p><p className="text-xs text-amber-600">{c.struggles}</p></div>}
                 {c.questions && <div className="bg-blue-50 rounded-lg p-2"><p className="text-xs font-medium text-blue-700 mb-1">Questions ❓</p><p className="text-xs text-blue-600">{c.questions}</p></div>}

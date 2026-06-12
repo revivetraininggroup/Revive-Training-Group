@@ -44,7 +44,7 @@ export default function ClientStatsPage() {
     <div>
       <h1 className="page-title mb-6">My Stats</h1>
 
-      <div className="grid grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-1 gap-3 mb-6">
         <div className="stat-card">
           <span className="stat-label">Current weight</span>
           <span className="stat-value">{latest?.weight_lbs ? `${latest.weight_lbs} lbs` : '—'}</span>
@@ -66,7 +66,7 @@ export default function ClientStatsPage() {
         <WeightGraph stats={stats} />
       </div>
 
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-4">
         <div className="card">
           <h2 className="section-title mb-4">Log today's stats</h2>
           <form onSubmit={logStats} className="space-y-3">
@@ -90,7 +90,7 @@ export default function ClientStatsPage() {
           </form>
         </div>
 
-        <div className="card p-0 overflow-hidden">
+        <div className="card p-0 overflow-x-auto">
           <p className="px-4 py-3 font-medium text-slate-800 border-b border-slate-100">History</p>
           {stats.length === 0 ? (
             <p className="p-4 text-sm text-slate-400">No stats logged yet.</p>

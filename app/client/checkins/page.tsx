@@ -124,7 +124,7 @@ export default function ClientCheckinPage() {
                 <p className="font-medium text-slate-800">Week of {c.week_start}</p>
                 {c.coach_feedback ? <span className="badge badge-green">Coach responded ✓</span> : <span className="badge badge-amber">Awaiting feedback</span>}
               </div>
-              <div className="grid grid-cols-5 gap-3 mb-3">
+              <div className="grid grid-cols-5 gap-1 mb-3">
                 {RATINGS.map(r => (
                   <div key={r.key}>
                     <p className="text-xs text-slate-400 mb-1">{r.emoji}</p>

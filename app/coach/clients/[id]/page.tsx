@@ -206,7 +206,7 @@ export default function ClientDetailPage() {
                 <p className="font-medium text-slate-800">Week of {c.week_start}</p>
                 {c.coach_feedback ? <span className="badge badge-green">Reviewed</span> : <span className="badge badge-amber">Pending</span>}
               </div>
-              <div className="grid grid-cols-5 gap-3 mb-3">
+              <div className="grid grid-cols-5 gap-1 mb-3">
                 {[['Energy', c.energy_level], ['Sleep', c.sleep_quality], ['Stress', c.stress_level], ['Nutrition', c.nutrition_adherence], ['Workouts', c.workout_adherence]].map(([label, val]) => (
                   <div key={label as string}>
                     <p className="text-xs text-slate-400 mb-1">{label}</p>
@@ -238,7 +238,7 @@ export default function ClientDetailPage() {
           </div>
           <div className="card">
             <h2 className="section-title mb-3">Add entry</h2>
-            <form onSubmit={logStat} className="grid grid-cols-2 md:grid-cols-4 gap-3 items-end">
+            <form onSubmit={logStat} className="grid grid-cols-2 gap-3 items-end">
               <div>
                 <label className="label">Date</label>
                 <input className="input" type="date" value={statForm.logged_at} onChange={e => setStatForm({...statForm, logged_at: e.target.value})} />
@@ -258,7 +258,7 @@ export default function ClientDetailPage() {
               </div>
             </form>
           </div>
-          <div className="card p-0 overflow-hidden">
+          <div className="card p-0 overflow-x-auto">
             <table className="w-full">
               <thead className="bg-slate-50 border-b border-slate-200">
                 <tr>

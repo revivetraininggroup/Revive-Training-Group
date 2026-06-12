@@ -114,7 +114,7 @@ export default function ClientPhotosPage() {
 
       <div className="card mb-6">
         <h2 className="section-title mb-4">Upload new photos</h2>
-        <div className="grid grid-cols-3 gap-4 mb-4">
+        <div className="grid grid-cols-3 gap-2 mb-4">
           {angles.map(({ key, label, ref }) => (
             <div key={key}>
               <p className="label mb-2">{label}</p>
@@ -181,7 +181,7 @@ export default function ClientPhotosPage() {
 
               {expanded === photo.id && (
                 <div className="mt-4 border-t border-slate-100 pt-4">
-                  <div className="grid grid-cols-3 gap-3">
+                  <div className="grid grid-cols-3 gap-2">
                     {[
                       { url: signedUrls[photo.id]?.front, label: 'Front' },
                       { url: signedUrls[photo.id]?.side, label: 'Side' },

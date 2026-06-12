@@ -131,7 +131,7 @@ export default function ClientCalendarPage() {
       </div>
 
       {/* 7 day grid */}
-      <div className="grid grid-cols-7 gap-2 mb-6">
+      <div className="grid grid-cols-7 gap-1 mb-4">
         {days.map(d => {
           const ds = toDateStr(d)
           const hasWorkout = (workoutsByDate[ds] ?? []).length > 0
@@ -144,18 +144,18 @@ export default function ClientCalendarPage() {
             <button
               key={ds}
               onClick={() => { setSelectedDate(ds); setSelectedWorkout(null) }}
-              className={`flex flex-col items-center gap-1 py-3 rounded-xl border transition-colors
+              className={`flex flex-col items-center gap-0.5 py-2 rounded-xl border transition-colors
                 ${isSelected ? 'bg-sky-600 border-sky-600 text-white' : 'bg-white border-slate-200 hover:border-sky-300'}
                 ${isPast && !isSelected ? 'opacity-60' : ''}
               `}
             >
-              <span className={`text-[10px] font-semibold uppercase tracking-wide ${isSelected ? 'text-sky-100' : 'text-slate-400'}`}>
+              <span className={`text-[9px] font-semibold uppercase tracking-wide ${isSelected ? 'text-sky-100' : 'text-slate-400'}`}>
                 {d.toLocaleDateString('en-US', { weekday: 'short' })}
               </span>
-              <span className={`text-base font-bold ${isSelected ? 'text-white' : isToday ? 'text-sky-600' : 'text-slate-800'}`}>
+              <span className={`text-sm font-bold ${isSelected ? 'text-white' : isToday ? 'text-sky-600' : 'text-slate-800'}`}>
                 {d.getDate()}
               </span>
-              <div className={`w-1.5 h-1.5 rounded-full ${isDone ? 'bg-green-400' : hasWorkout ? (isSelected ? 'bg-sky-200' : 'bg-sky-400') : 'bg-transparent'}`} />
+              <div className={`w-1 h-1 rounded-full ${isDone ? 'bg-green-400' : hasWorkout ? (isSelected ? 'bg-sky-200' : 'bg-sky-400') : 'bg-transparent'}`} />
             </button>
           )
         })}
