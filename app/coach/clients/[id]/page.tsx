@@ -14,8 +14,11 @@ export default function ClientDetailPage() {
   const [logs, setLogs] = useState<any[]>([])
   const [onboarding, setOnboarding] = useState<any>(null)
   const [aiAnalysis, setAiAnalysis] = useState<string>('')
+  const [notes, setNotes] = useState<any[]>([])
+  const [newNote, setNewNote] = useState('')
+  const [savingNote, setSavingNote] = useState(false)
   const [loadingAnalysis, setLoadingAnalysis] = useState(false)
-  const [tab, setTab] = useState<'overview' | 'checkins' | 'stats' | 'logs' | 'onboarding'>('overview')
+  const [tab, setTab] = useState<'overview' | 'checkins' | 'stats' | 'logs' | 'onboarding' | 'notes'>('overview')
   const [showProfile, setShowProfile] = useState(false)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [editForm, setEditForm] = useState({ full_name: '', goal: '', notes: '' })
@@ -47,8 +50,9 @@ export default function ClientDetailPage() {
       }
 
       const { data: ob } = await supabase.from('client_onboarding').select('*').eq('client_id', id).maybeSingle()
+      const { data: coachNotes } = await supabase.from('coach_notes').select('*').eq('client_id', id).eq('coach_id', user.id).order('created_at', { ascending: false })
       const c = clientData ? { ...clientData, profile: profileData } : null
-      setClient(c); setCheckins(ci ?? []); setStats(s ?? []); setLogs(l ?? []); setOnboarding(ob ?? null)
+      setClient(c); setCheckins(ci ?? []); setStats(s ?? []); setLogs(l ?? []); setOnboarding(ob ?? null); setNotes(coachNotes ?? [])
 
       // Auto-run AI analysis
       if (clientData && (ci?.length || s?.length || l?.length)) {
@@ -76,6 +80,27 @@ export default function ClientDetailPage() {
   useEffect(() => {
     if (client) setEditForm({ full_name: client.profile?.full_name ?? '', goal: client.goal ?? '', notes: client.notes ?? '' })
   }, [client])
+
+  async function saveNote() {
+    if (!newNote.trim()) return
+    setSavingNote(true)
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return
+    await supabase.from('coach_notes').insert({
+      client_id: id,
+      coach_id: user.id,
+      content: newNote.trim(),
+    })
+    setNewNote('')
+    const { data } = await supabase.from('coach_notes').select('*').eq('client_id', id).eq('coach_id', user.id).order('created_at', { ascending: false })
+    setNotes(data ?? [])
+    setSavingNote(false)
+  }
+
+  async function deleteNote(noteId: string) {
+    await supabase.from('coach_notes').delete().eq('id', noteId)
+    setNotes(prev => prev.filter(n => n.id !== noteId))
+  }
 
   async function logStat(e: React.FormEvent) {
     e.preventDefault()
@@ -110,7 +135,7 @@ export default function ClientDetailPage() {
 
   if (!client) return <div className="text-slate-400">Loading...</div>
 
-  const tabs = ['overview', 'checkins', 'stats', 'logs', 'onboarding'] as const
+  const tabs = ['overview', 'checkins', 'stats', 'logs', 'onboarding', 'notes'] as const
 
   return (
     <div>
@@ -371,6 +396,55 @@ export default function ClientDetailPage() {
               <span className="badge badge-green">Completed ✓</span>
             </div>
           ))}
+        </div>
+      )}
+
+      {tab === 'notes' && (
+        <div className="space-y-4">
+          <div className="card">
+            <h2 className="section-title mb-3">Add a note</h2>
+            <textarea
+              className="input w-full mb-3"
+              rows={4}
+              placeholder="Write a note about this client's progress, program changes, conversations, anything relevant..."
+              value={newNote}
+              onChange={e => setNewNote(e.target.value)}
+            />
+            <button
+              onClick={saveNote}
+              disabled={savingNote || !newNote.trim()}
+              className="btn-primary"
+            >
+              {savingNote ? 'Saving...' : 'Save note'}
+            </button>
+          </div>
+
+          <div className="space-y-3">
+            {notes.length === 0 ? (
+              <p className="text-slate-400 text-sm text-center py-8">No notes yet. Add your first note above.</p>
+            ) : notes.map(n => (
+              <div key={n.id} className="card">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex-1">
+                    <p className="text-xs text-slate-400 mb-1.5">
+                      {new Date(n.created_at).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}
+                      {' · '}
+                      {new Date(n.created_at).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
+                    </p>
+                    <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">{n.content}</p>
+                  </div>
+                  <button
+                    onClick={() => deleteNote(n.id)}
+                    className="text-slate-300 hover:text-red-400 transition-colors flex-shrink-0 mt-0.5"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
