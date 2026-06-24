@@ -28,9 +28,18 @@ const navIcons: Record<string, React.ReactNode> = {
       <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
     </svg>
   ),
+  '/client/community': (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+      <circle cx="9" cy="7" r="4"/>
+      <path d="M23 21v-2a4 4 0 00-3-3.87"/>
+      <path d="M16 3.13a4 4 0 010 7.75"/>
+    </svg>
+  ),
   '/client/onboarding': (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-      <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+      <circle cx="12" cy="8" r="4"/>
+      <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
     </svg>
   ),
 }
@@ -39,9 +48,9 @@ const navIcons: Record<string, React.ReactNode> = {
 const bottomNavItems = [
   { href: '/client/dashboard', label: 'Home' },
   { href: '/client/calendar', label: 'Training' },
+  { href: '/client/community', label: 'Community' },
   { href: '/client/checkins', label: 'Check-in' },
   { href: '/client/messages', label: 'Messages' },
-  { href: '/client/onboarding', label: 'Profile' },
 ]
 
 // Full nav for desktop sidebar
@@ -53,6 +62,7 @@ const allNavItems = [
   { href: '/client/stats', label: 'My Stats' },
   { href: '/client/photos', label: 'Photos' },
   { href: '/client/messages', label: 'Messages' },
+  { href: '/client/community', label: 'Community' },
   { href: '/client/onboarding', label: 'My Profile' },
 ]
 
